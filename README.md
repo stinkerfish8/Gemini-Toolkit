@@ -1,32 +1,21 @@
 # Gemini Toolkit
 
-Enhances the Google Gemini interface with productivity tools and UI improvements.
+Enhances the Google Gemini interface with a clean and efficient message saver.
 
-## Features
-* **Advanced Message Saver:** Adds a "📌 Save" button to every message. You can now download conversations in multiple formats:
-    * **.txt / .md**: For clean, plain text or markdown notes.
-    * **.rtf**: Rich text format compatible with WordPad and Microsoft Word.
-    * **.html**: Preserves the original web formatting, bold text, and layout.
+### Features
+- **Save Button**: Adds an export button to every message.
+- **Multiple Formats**: Download as **.txt**, **.rtf**, or **.html**.
+- **Smart Markdown (.md)**: Converts headers, bold text, links, and code blocks into clean Markdown.
+- **Clean Export**: Automatically removes UI elements and disarms HTML tags for a perfect file preview.
 
-## Installation
-
-1. Install a userscript manager such as [Violentmonkey](https://violentmonkey.github.io/) or [Tampermonkey](https://www.tampermonkey.net/).
+### Installation
+1. Install [Violentmonkey](https://violentmonkey.github.io/) or [Tampermonkey](https://www.tampermonkey.net/).
 2. [**Install Gemini Toolkit**](https://github.com/stinkerfish8/Gemini-Toolkit/raw/main/gemini-toolkit.user.js)
 
-## How to use
-After installation, navigate to [Google Gemini](https://gemini.google.com/). 
+### How to use
+1. Open [Google Gemini](https://gemini.google.com/). 
+2. Click **"📌 Save"** at the end of any message.
+3. Enter a filename and choose your format.
 
-1. A **"📌 Save"** button will appear at the end of each message.
-2. Click the button and enter a filename.
-3. Choose your preferred format (**txt, md, rtf, html**). 
-4. The file will be downloaded instantly to your device.
-
-## Testing and Compatibility
-This tool is regularly tested on modern browsers (Chrome, Firefox) and the generated files are compatible with:
-* Text editors (Notepad, VS Code).
-* Document processors (WordPad, MS Word).
-* Web browsers (for HTML preview).
-
-## License and Credits
-This project is licensed under the MIT License.
-Conceptualized and tested by **Stinker_Fish**, with code implementation assisted by **Gemini AI**.
+### License and Credits
+MIT License. Created by **Stinker_Fish**, assisted by **Gemini AI**.
