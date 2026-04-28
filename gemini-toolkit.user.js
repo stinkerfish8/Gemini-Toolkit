@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Gemini Toolkit
 // @namespace    stinkerfish8
-// @version      1.1.0
+// @version      1.2.0
 // @description  Enhances Gemini UI with a message saver tool
-// @author       Stinker_Fish
+// @author       Stinker_Fish (assisted by Gemini AI)
 // @match        https://gemini.google.com/*
 // @grant        none
 // ==/UserScript==
@@ -13,29 +13,34 @@
 
     // Function to download text as a .txt file
     function downloadText(text) {
-        // 1. Ask the user for a filename
+        //file name
         let fileName = prompt("Enter a filename for your note:", "gemini_note");
-
-        // 2. If user cancels (clicks Cancel), stop the function
         if (fileName === null) return;
-
-        // 3. If user leaves it empty, use a default name
         if (fileName.trim() === "") fileName = "gemini_note";
 
-        // 4. Create the "Blob" (the data package)
-        const blob = new Blob([text], { type: 'text/plain' });
+        //format choice
+        let format = prompt("2/2: Choose format (txt, md, rtf):", "txt").toLowerCase().trim();
+        if (format === null) return;
 
-        // 5. Create a temporary invisible link (anchor)
+        //validation: default to txt if the input is not recognized
+        const validFormats = ["txt", "md", "rtf"]
+        if (!validFormats.includes(format)) {
+            format = "txt";
+        }
+
+        //set the correct MIME type based on format
+        let mimeType = 'text/plain';
+        if (format === 'rtf') mimeType = 'application/rtf';
+
+        //create the data package
+        const blob = new Blob([text], { type: mimeType });
+
+        //create the anchor
         const anchor = document.createElement('a');
 
-        // 6. Set the filename with the .txt extension
-        anchor.download = fileName.trim() + ".txt";
-        
-        // 7. Create a temporary URL for the Blob and "click" it
+        anchor.download = fileName.trim() + "." + format;
         anchor.href = URL.createObjectURL(blob);
         anchor.click();
-
-        // 8. Clean up the temporary URL from memory
         URL.revokeObjectURL(anchor.href);
     }
 
