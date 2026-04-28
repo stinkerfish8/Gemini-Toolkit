@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Toolkit
-// @namespace    stinkerfish8
-// @version      1.2.0
+// @namespace    https://github.com/stinkerfish8/Gemini-Toolkit
+// @version      1.3.0
 // @description  Enhances Gemini UI with a message saver tool
 // @author       Stinker_Fish (assisted by Gemini AI)
 // @match        https://gemini.google.com/*
@@ -11,31 +11,40 @@
 (function() {
     'use strict';
 
-    // Function to download text as a .txt file
-    function downloadText(text) {
-        //file name
-        let fileName = prompt("Enter a filename for your note:", "gemini_note");
+    // Function to download text
+    function downloadText(msgElement) {
+        // Prompt for the file name
+        let fileName = prompt("1/2: Enter filename:", "gemini_note");
         if (fileName === null) return;
         if (fileName.trim() === "") fileName = "gemini_note";
 
-        //format choice
-        let format = prompt("2/2: Choose format (txt, md, rtf):", "txt").toLowerCase().trim();
+        // Prompt for the format choice
+        let format = prompt("2/2: Choose format (txt, md, rtf, html):", "txt").toLowerCase().trim();
         if (format === null) return;
 
-        //validation: default to txt if the input is not recognized
-        const validFormats = ["txt", "md", "rtf"]
+        // Validation updated
+        const validFormats = ["txt", "md", "rtf", "html"];
         if (!validFormats.includes(format)) {
             format = "txt";
         }
 
-        //set the correct MIME type based on format
+        let content;
         let mimeType = 'text/plain';
-        if (format === 'rtf') mimeType = 'application/rtf';
 
-        //create the data package
-        const blob = new Blob([text], { type: mimeType });
+        if (format === 'html') {
+            // If html is selected, get innerHTML
+            content = msgElement.innerHTML.replace(/📌 Save/g, ''); 
+            mimeType = 'text/html';
+        } else {
+            // Fallback to plain text
+            content = msgElement.innerText.replace('📌 Save', '').trim();
+            if (format === 'rtf') mimeType = 'application/rtf';
+        }
 
-        //create the anchor
+        // Create the Blob object
+        const blob = new Blob([content], { type: mimeType });
+
+        // Create the anchor
         const anchor = document.createElement('a');
 
         anchor.download = fileName.trim() + "." + format;
@@ -61,9 +70,7 @@
 
                 // Action when clicked
                 btn.onclick = () => {
-                    // Get message text, remove the "Save" label from it, and trim spaces
-                    const text = msg.innerText.replace('📌 Save', '').trim();
-                    downloadText(text);
+                    downloadText(msg);
                 };
 
                 // Attach the button to the message
