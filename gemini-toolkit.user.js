@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gemini Toolkit
 // @namespace    https://github.com/stinkerfish8/Gemini-Toolkit
-// @version      1.3.0
+// @version      1.4.0
 // @description  Enhances Gemini UI with a message saver tool
 // @author       Stinker_Fish (assisted by Gemini AI)
 // @match        https://gemini.google.com/*
@@ -11,7 +11,56 @@
 (function() {
     'use strict';
 
-    // Function to download text
+    // Utility function: convert html to md
+    function convertToMarkdown(html) {
+        let md = html;
+
+        // Remove the "Save" button from the output
+        md = md.replace(/<button class="save-button".*?<\/button>/g, '');
+
+        // Multiline Code Blocks: <pre><code>...</code></pre> -> ```...```
+        // Using [\s\S]*? to include newlines inside code blocks
+        md = md.replace(/<pre[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre>/g, '\n```\n$1\n```\n');
+        
+        // Inline Code: <code>text</code> -> `text`
+        md = md.replace(/<code>(.*?)<\/code>/g, '`$1`');
+
+        // Bold: <strong> or <b> -> **text**
+        md = md.replace(/<strong>(.*?)<\/strong>/g, '**$1**');
+        md = md.replace(/<b>(.*?)<\/b>/g, '**$1**');
+
+        // Italic: <em> or <i> -> *text*
+        md = md.replace(/<em>(.*?)<\/em>/g, '*$1*');
+        md = md.replace(/<i>(.*?)<\/i>/g, '*$1*');
+
+        // Lists: <li> -> * item
+        md = md.replace(/<li>(.*?)<\/li>/g, '* $1\n');
+
+        // Headers: <h1> to <h6> -> ## text
+        md = md.replace(/<h[1-6][^>]*>(.*?)<\/h[1-6]>/g, '\n## $1\n');
+
+        // Links: <a href="url">text</a> -> [text](url)
+        md = md.replace(/<a href="(.*?)".*?>(.*?)<\/a>/g, '[$2]($1)');
+
+        // Line breaks: <br> -> newline
+        md = md.replace(/<br\s*\/?>/g, '\n');
+
+        // Blockquotes and Horizontal Rules
+        md = md.replace(/<blockquote>([\s\S]*?)<\/blockquote>/g, '\n> $1\n');
+        md = md.replace(/<hr\s*\/?>/g, '\n---\n');
+        
+        // Final cleanup: Use a temporary element to strip remaining HTML tags
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = md;
+        let finalMd = tempDiv.innerText.trim();
+        
+        // Escape: Transform textual tags (like <button>) into safe text
+        finalMd = finalMd.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+        return finalMd;
+    }
+
+    // Main function: to download text
     function downloadText(msgElement) {
         // Prompt for the file name
         let fileName = prompt("1/2: Enter filename:", "gemini_note");
@@ -28,16 +77,30 @@
             format = "txt";
         }
 
+        // Create a clean clone of the message
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = msgElement.innerHTML;
+        
+        // Remove ANY button tag physically
+        const buttons = tempDiv.querySelectorAll('button');
+        buttons.forEach(btn => btn.remove());
+
         let content;
         let mimeType = 'text/plain';
 
         if (format === 'html') {
-            // If html is selected, get innerHTML
-            content = msgElement.innerHTML.replace(/📌 Save/g, ''); 
+            // This removes the ENTIRE button tag, not just the text
+            content = tempDiv.innerHTML; 
             mimeType = 'text/html';
-        } else {
-            // Fallback to plain text
-            content = msgElement.innerText.replace('📌 Save', '').trim();
+        }
+
+        else if (format === 'md') {
+            // Call the utility conversion function
+            content = convertToMarkdown(tempDiv.innerHTML);
+            mimeType = 'text/markdown';
+        }
+        else {
+            content = tempDiv.innerText;
             if (format === 'rtf') mimeType = 'application/rtf';
         }
 
@@ -53,7 +116,7 @@
         URL.revokeObjectURL(anchor.href);
     }
 
-    // Main loop to check for new messages every 2 seconds
+    // Main loop: to check for new messages every 2 seconds
     setInterval(() => {
         // Find all possible message containers in Gemini's UI
         const messages = document.querySelectorAll('.message-content, .model-response-text, .user-query');
