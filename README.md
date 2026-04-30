@@ -1,6 +1,9 @@
-# Gemini Toolkit
+# Gemini Toolkit (DEPRECATED)
 
 Enhances the Google Gemini interface with a clean and efficient message saver.
+
+> [!CAUTION]
+> **PROJECT DEPRECATED:** Due to recent security updates by Google (Trusted Types Policy), injecting download scripts into the Gemini interface is no longer possible. The "Save" button is non-functional, and this project will not receive any further updates.
 
 ### Features
 - **Save Button**: Adds an export button to every message.
