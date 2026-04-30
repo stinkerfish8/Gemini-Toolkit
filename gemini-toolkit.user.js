@@ -1,10 +1,11 @@
 // ==UserScript==
-// @name         Gemini Toolkit
+// @name         Gemini Toolkit (DEPRECATED)
 // @namespace    https://github.com/stinkerfish8/Gemini-Toolkit
 // @version      1.4.0
 // @description  Enhances Gemini UI with a message saver tool
 // @author       Stinker_Fish (assisted by Gemini AI)
 // @match        https://gemini.google.com/*
+// @icon         https://favicon.im/gemini.google.com?larger=true
 // @grant        none
 // ==/UserScript==
 
